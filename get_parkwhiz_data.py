@@ -33,7 +33,7 @@ for i in range(len(dates) - 1):
     end_time = '&end_time=' + dates[i + 1] + 'T00:00'
     query = url + area + start_time + end_time + '&api_key=' + api_key
 
-    # print(query)
+    print(query)
     response = requests.get(query)
 
     json_response = response.json()
@@ -52,15 +52,15 @@ for i in range(len(dates) - 1):
         if len(price_list) > 0:
             price = np.mean(price_list)
         else:
-            price = -1
+            price = None
 
         if _id not in info_table.keys():
             info_table[_id] = {'address': address,
                                'coordinates': coordinates}
-            price_table[_id] = [None for j in range(len(dates) - 1)]
-            price_table[_id][i] = price
+            price_table[address] = [None for j in range(len(dates) - 1)]
+            price_table[address][i] = price
         else:
-            price_table[_id][i] = price
+            price_table[address][i] = price
 
 info_table = pd.DataFrame.from_dict(info_table, orient='index')
 price_table = pd.DataFrame.from_dict(price_table, orient='index')
