@@ -8,6 +8,8 @@ import numpy as np
 import pandas as pd
 from datetime import datetime, timedelta
 
+day_of_week = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+
 info_table = {}
 price_table = {}
 
@@ -15,7 +17,7 @@ api_key = 'dcb80824cf2f2c7b8f60c424745aa097412ee9e7'
 url = 'https://api.parkwhiz.com/v4/quotes/'
 area = '?q=coordinates:42.358056,-71.063611 distance:10'
 
-start_date = '2017-12-01'
+start_date = '2017-09-01'
 end_date = '2018-03-01'
 
 start = datetime.strptime(start_date, '%Y-%m-%d').date()
@@ -64,7 +66,7 @@ for i in range(len(dates) - 1):
 
 info_table = pd.DataFrame.from_dict(info_table, orient='index')
 price_table = pd.DataFrame.from_dict(price_table, orient='index')
-price_table.set_axis(axis=1, labels=dates[:-1])
+price_table.set_axis(axis=1, labels=[d + ', ' + day_of_week[datetime.strptime(d, '%Y-%m-%d').date().weekday()] for d in dates[:-1]])
 
 print(info_table)
 print(price_table)
