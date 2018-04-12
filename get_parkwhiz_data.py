@@ -13,12 +13,14 @@ day_of_week = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 info_table = {}
 price_table = {}
 
+check_none_value = {}
+
 api_key = 'dcb80824cf2f2c7b8f60c424745aa097412ee9e7'
 url = 'https://api.parkwhiz.com/v4/quotes/'
 area = '?q=coordinates:42.358056,-71.063611 distance:10'
 
-start_date = '2017-09-01'
-end_date = '2018-03-01'
+start_date = '2008-04-01'
+end_date = '2018-04-01'
 
 start = datetime.strptime(start_date, '%Y-%m-%d').date()
 end = datetime.strptime(end_date, '%Y-%m-%d').date()
@@ -61,12 +63,22 @@ for i in range(len(dates) - 1):
                                'coordinates': coordinates}
             price_table[address] = [None for j in range(len(dates) - 1)]
             price_table[address][i] = price
+            check_none_value[address] = False
+            if price is not None:
+                check_none_value[address] = True
         else:
             price_table[address][i] = price
+            if price is not None:
+                check_none_value[address] = True
 
 info_table = pd.DataFrame.from_dict(info_table, orient='index')
 price_table = pd.DataFrame.from_dict(price_table, orient='index')
 price_table.set_axis(axis=1, labels=[d + ', ' + day_of_week[datetime.strptime(d, '%Y-%m-%d').date().weekday()] for d in dates[:-1]])
+
+for addr in check_none_value.keys():
+    if check_none_value[addr] == False:
+        info_table = info_table[info_table.address != addr]
+        price_table = price_table[price_table.index != addr]
 
 print(info_table)
 print(price_table)
